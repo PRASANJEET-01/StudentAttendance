@@ -3,12 +3,15 @@ const dotenv = require('dotenv');
 const morgan = require('morgan');
 const bodyParser = require("body-parser");
 const path = require('path');
+const connectDB = require('./server/database/connection')
 
 const app = express();
 dotenv.config({path:'config.env'});
 const PORT = process.env.PORT || 8080
 //log rquest
 app.use(morgan('tiny'));
+//mongodb connection
+connectDB();
 
 //parse request to body-parser
 app.use(bodyParser.urlencoded({extended:true}))
@@ -25,20 +28,10 @@ app.use('/css',express.static(path.resolve(__dirname,"assets/css")));
 app.use('/img',express.static(path.resolve(__dirname,"assets/img")));
 app.use('/js',express.static(path.resolve(__dirname,"assets/js")));
 
+//load routers
+
+app.use("/",require('./server/routes/router'))
 
 
-app.get('/',(req,res) =>{
-    // res.send("Crud Application");
-    res.render('index');
-})
-
-app.get('/add_user',(req,res) =>{
-    // res.send("Crud Application");
-    res.render(`add_user`);
-})
-app.get('/update-user',(req,res) =>{
-    // res.send("Crud Application");
-    res.render(`update_user`);
-})
 
 app.listen(PORT,() => {console.log(`Server is running on http://localhost:${PORT}`)});
